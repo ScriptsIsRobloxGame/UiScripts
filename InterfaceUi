@@ -1,0 +1,638 @@
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/ScriptsIsRobloxGame/UiScripts/refs/heads/main/.gitignore'))()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:FindFirstChildOfClass("Humanoid")
+local userInputService = game:GetService("UserInputService")
+local teleportDelay = 0.5
+local isCollecting = false
+local targetName = ""
+
+wait()game:GetService("StarterGui"):SetCore("ResetButtonCallback", false)
+
+local Window = Rayfield:CreateWindow({
+	Name = "🚇 Casual Script",
+	Icon = 0,
+	LoadingTitle = "🚇 Casual Script",
+	LoadingSubtitle = "by PavelDIPF",
+	Theme = "DarkBlue",
+	DisableRayfieldPrompts = false,
+	DisableBuildWarnings = false,
+	ConfigurationSaving = {
+		Enabled = false,
+		FolderName = nil,
+		FileName = "CasualScript"
+	},
+
+	Discord = {
+		Enabled = false,
+		Invite = "noinvitelink",
+		RememberJoins = true
+	},
+
+	KeySystem = true,
+	KeySettings = {
+		Title = "🔑 Пожалуйста введите ключ",
+		Subtitle = "Система Ключей",
+		Note = "Код можно получить в 📢 ТГК: CasualScripts", 
+		FileName = "assest", 
+		SaveKey = true, 
+		GrabKeyFromSite = false, 
+		Key = {"U!i@2gf*34b$&^3"} 
+	}
+})
+
+local Tab = Window:CreateTab("Movement", 87668555631492)
+
+local Divider = Tab:CreateDivider()
+
+local SpeedHackSlider = Tab:CreateSlider({
+	Name = "🏃 SpeedHack",
+	Range = {16, 100}, 
+	Increment = 1,
+	Suffix = " Speed",
+	CurrentValue = 16, 
+	Flag = "SpeedSlider",
+	Callback = function(Value)
+		if humanoid then
+			humanoid.WalkSpeed = Value 
+		end
+	end,
+})
+
+local NoclipHackToggle = Tab:CreateToggle({
+	Name = "👻 NoclipHack",
+	CurrentValue = false,
+	Flag = "NoclipHackToggle",
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+		local character = player.Character or player.CharacterAdded:Wait()
+		local humanoid = character:WaitForChild("Humanoid")
+
+		if Value then
+			for _, part in ipairs(character:GetChildren()) do
+				if part:IsA("BasePart") then
+					part.CanCollide = false
+				end
+			end
+		else
+			for _, part in ipairs(character:GetChildren()) do
+				if part:IsA("BasePart") then
+					part.CanCollide = true
+				end
+			end
+		end
+	end,
+})
+
+
+local Divider = Tab:CreateDivider()
+
+player.CharacterAdded:Connect(function(newCharacter)
+	humanoid = newCharacter:FindFirstChildOfClass("Humanoid")
+end)
+
+local Button = Tab:CreateButton({
+	Name = "🚀 Телепорт к игроку",
+	Callback = function()
+		if targetName == "" then return end
+
+		local targetPlayer = nil
+		for _, p in ipairs(game.Players:GetPlayers()) do
+			if string.find(string.lower(p.Name), string.lower(targetName)) then
+				targetPlayer = p
+				break 
+			end
+		end
+
+		if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			local humanoidRootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+			if humanoidRootPart then
+				humanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
+			end
+		end
+	end,
+})
+
+local Input = Tab:CreateInput({
+	Name = "🤓 Введите ник",
+	CurrentValue = "",
+	PlaceholderText = "Ник игрока",
+	RemoveTextAfterFocusLost = false,
+	Flag = "PlayerInput",
+	Callback = function(Text)
+		targetName = Text 
+	end,
+})
+
+local Divider = Tab:CreateDivider() 
+
+local Button = Tab:CreateButton({
+	Name = "🛒 Телепорт к Барыге",
+	Callback = function()
+		local player = game.Players.LocalPlayer
+		local character = player.Character
+		if character and character:FindFirstChild("HumanoidRootPart") then
+			character.HumanoidRootPart.CFrame = CFrame.new(172.668457, 17.8651752, -44.9615479)
+		end
+	end,
+})
+
+local Button = Tab:CreateButton({
+	Name = "🏪 Телепорт к ТЦ",
+	Callback = function()
+		local player = game.Players.LocalPlayer
+		local character = player.Character
+		if character and character:FindFirstChild("HumanoidRootPart") then
+			character.HumanoidRootPart.CFrame = CFrame.new(-6.787563800811768, 5.204082012176514, -117.83819580078125)
+		end
+	end,
+})
+
+local Divider = Tab:CreateDivider() 
+
+local Tab = Window:CreateTab("Esp", 74099188223309)
+
+local UserInputService = game:GetService("UserInputService")
+local Clothing = game.Workspace:FindFirstChild("Clothing")
+
+local highlightColors = {
+	none = Color3.fromRGB(255, 255, 255),
+	rare = Color3.fromRGB(8, 3, 141),
+	epic = Color3.fromRGB(103, 0, 154),
+	legendary = Color3.fromRGB(227, 227, 0),
+	admin = Color3.fromRGB(161, 0, 3),
+	ultimate = Color3.fromRGB(255, 2, 255),
+	blue = Color3.fromRGB(0, 170, 255),
+}
+
+local items = {
+	shirts = {
+		["13783114726"] = "blue",
+		["13686174145"] = "legendary",
+		["13112278696"] = "admin",
+		["9966500982"] = "admin",
+		["78478646034235"] = "legendary",
+		["11399187381"] = "legendary", 
+		["7172768240"] = "legendary",
+		["14387015395"] = "legendary", 
+		["4977533353"] = "gold",
+		["14610851449"] = "legendary",
+		["11849088376"] = "admin",
+		["14045339941"] = "admin",
+		["8286855177"] = "legendary",
+		["15092420573"] = "ultimate", 
+		["16310782401"] = "admin", 
+		["13634019459"] = "legendary",
+		["14617460767"] = "admin",
+		["6434833814"] = "admin",
+		["10774950203"] = "admin",
+		["15393383449"] = "admin", 
+		["5219845970"] = "admin",
+		["11624442164"] = "admin",
+		["6406870851"] = "admin",
+		["13121694218"] = "epic",
+		["11235784172"] = "admin",
+		["13117322084"] = "epic",
+		["12849806373"] = "epic",
+		["15373236991"] = "admin",
+		["14217806745"] = "epic",
+		["7713824524"] = "admin",
+		["14479226476"] = "epic",
+		["11231715489"] = "epic",
+		["13118563657"] = "epic",
+		["9468365501"] = "epic",
+		["7791541966"] = "epic",
+		["13399301724"] = "epic",
+		["14160465716"] = "ultimate",
+		["13214910323"] = "epic",
+		["13214898748"] = "epic",
+		["13023747652"] = "legendary",
+		["12779513863"] = "admin",
+		["13118233790"] = "admin",
+		["13469431089"] = "epic",
+		["13779106850"] = "epic",
+		["8195412170"] = "legendary",
+		["13122216162"] = "epic",
+		["5081906790"] = "legendary", 
+		["129264610471514"] = "admin", 
+		["8509230323"] = "epic",
+		["6492846709"] = "legendary", 
+	},
+	pants = {
+		["13783120639"] = "blue",
+		["12866275081"] = "legendary",
+		["85873511189587"] = "legendary", 
+		["16096601147"] = "legendary",
+		["9743673448"] = "admin",
+		["14357291910"] = "epic",
+		["14385572734"] = "rare",
+		["16027104410"] = "rare",
+		["13725833679"] = "epic",
+		["13668016214"] = "blue",
+		["13116396791"] = "admin",
+		["10837133941"] = "ultimate",
+		["13085933635"] = "epic",
+		["13132377494"] = "admin",
+		["98785609645432"] = "admin", 
+		["12238831815"] = "epic",
+		["15091951487"] = "ultimate",
+		["11881332961"] = "blue",
+	},
+}
+
+local highlightEnabled = false
+local highlightTransparency = 0.5
+local outlineTransparency = 0.5
+local highlightAdmin = false
+local highlightLegendary = false
+local highlightRare = false
+local highlightEpic = false
+local highlightUltimate = false
+local highlightBlue = false
+
+local function clearHighlights()
+	for _, obj in pairs(Clothing:GetDescendants()) do
+		if obj:IsA("Highlight") then
+			obj:Destroy()
+		end
+	end
+end
+
+local function checkAndHighlight()
+	if not highlightEnabled then
+		clearHighlights()
+		return
+	end
+
+	clearHighlights()
+
+	for _, item in pairs(Clothing:GetChildren()) do
+		if item:IsA("Model") then
+			local MainFolder = item:FindFirstChild("Main")
+			if MainFolder then
+				for _, model in pairs(MainFolder:GetChildren()) do
+					if model:IsA("Model") then
+						local shirtObj = model:FindFirstChild("Shirt")
+						local pantsObj = model:FindFirstChild("Pants")
+
+						local shirtId = shirtObj and shirtObj.ShirtTemplate and tostring(shirtObj.ShirtTemplate):gsub("rbxassetid://", "") or nil
+						local pantsId = pantsObj and pantsObj.PantsTemplate and tostring(pantsObj.PantsTemplate):gsub("rbxassetid://", "") or nil
+
+						if shirtId and items.shirts[shirtId] then
+							local colorKey = items.shirts[shirtId]
+							if (colorKey == "admin" and highlightAdmin) or
+								(colorKey == "legendary" and highlightLegendary) or
+								(colorKey == "rare" and highlightRare) or
+								(colorKey == "epic" and highlightEpic) or
+								(colorKey == "ultimate" and highlightUltimate) or
+								(colorKey == "blue" and highlightBlue) then
+								local highlight = model:FindFirstChildOfClass("Highlight") or Instance.new("Highlight")
+								highlight.FillColor = highlightColors[colorKey]
+								highlight.FillTransparency = highlightTransparency
+								highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+								highlight.OutlineTransparency = outlineTransparency
+								highlight.Parent = model
+							end
+						end
+
+						if pantsId and items.pants[pantsId] then
+							local colorKey = items.pants[pantsId]
+							if (colorKey == "admin" and highlightAdmin) or
+								(colorKey == "legendary" and highlightLegendary) or
+								(colorKey == "rare" and highlightRare) or
+								(colorKey == "epic" and highlightEpic) or
+								(colorKey == "ultimate" and highlightUltimate) or
+								(colorKey == "blue" and highlightBlue) then
+								local highlight = model:FindFirstChildOfClass("Highlight") or Instance.new("Highlight")
+								highlight.FillColor = highlightColors[colorKey]
+								highlight.FillTransparency = highlightTransparency
+								highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+								highlight.OutlineTransparency = outlineTransparency
+								highlight.Parent = model
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+local Divider = Tab:CreateDivider()
+
+Tab:CreateToggle({
+	Name = "💡 Включить подсветку вещей",
+	CurrentValue = false,
+	Flag = "highlightToggle",
+	Callback = function(Value)
+		highlightEnabled = Value
+		checkAndHighlight()
+	end,
+})
+
+Tab:CreateKeybind({
+	Name = "🔃 Перезагрузить подсветку вещей",
+	CurrentKeybind = "R",
+	HoldToInteract = false,
+	Flag = "highlightKeybind",
+	Callback = function()
+		local currentFillTransparency = highlightTransparency
+		local currentOutlineTransparency = outlineTransparency
+
+		highlightTransparency = currentFillTransparency + 0.1
+		checkAndHighlight()
+		wait(0.1)
+		highlightTransparency = currentFillTransparency
+		outlineTransparency = currentOutlineTransparency
+		checkAndHighlight()
+	end,
+})
+
+local Divider = Tab:CreateDivider()
+
+Tab:CreateToggle({
+	Name = "🔵 Подсветить Редкие вещи",
+	CurrentValue = false,
+	Flag = "highlightRare",
+	Callback = function(Value)
+		highlightRare = Value
+		checkAndHighlight()
+	end,
+})
+
+Tab:CreateToggle({
+	Name = "💜 Подсветить Епические вещи",
+	CurrentValue = false,
+	Flag = "highlightEpic",
+	Callback = function(Value)
+		highlightEpic = Value
+		checkAndHighlight()
+	end,
+})
+
+Tab:CreateToggle({
+	Name = "🏆 Подсветить Легендарные вещи",
+	CurrentValue = false,
+	Flag = "highlightLegendary",
+	Callback = function(Value)
+		highlightLegendary = Value
+		checkAndHighlight()
+	end,
+})
+
+Tab:CreateToggle({
+	Name = "🔴 Подсветить Красные вещи",
+	CurrentValue = false,
+	Flag = "highlightAdmin",
+	Callback = function(Value)
+		highlightAdmin = Value
+		checkAndHighlight()
+	end,
+})
+
+Tab:CreateToggle({
+	Name = "🌸 Подсветить Ultimate вещи",
+	CurrentValue = false,
+	Flag = "highlightUltimate",
+	Callback = function(Value)
+		highlightUltimate = Value
+		checkAndHighlight()
+	end,
+})
+
+Tab:CreateToggle({
+	Name = "💎 Подсветить Ultimate2 вещи",
+	CurrentValue = false,
+	Flag = "highlightBlue",
+	Callback = function(Value)
+		highlightBlue = Value
+		checkAndHighlight()
+	end,
+})
+
+local Divider = Tab:CreateDivider()
+
+Tab:CreateSlider({
+	Name = "Прозрачность заливки",
+	Range = {0, 1},
+	Increment = 0.1,
+	Suffix = "",
+	CurrentValue = 0.5,
+	Flag = "fillTransparency",
+	Callback = function(Value)
+		highlightTransparency = Value
+		checkAndHighlight()
+	end,
+})
+
+Tab:CreateSlider({
+	Name = "Прозрачность обводки",
+	Range = {0, 1},
+	Increment = 0.1,
+	Suffix = "",
+	CurrentValue = 0.5,
+	Flag = "outlineTransparency",
+	Callback = function(Value)
+		outlineTransparency = Value
+		checkAndHighlight()
+	end,
+})
+
+local Divider = Tab:CreateDivider()
+
+local Tab = Window:CreateTab("Visuals", 108824641155327)
+
+local Section = Tab:CreateSection("Все изменения происходят локально и видны только вам, так как это визуал")
+
+local Divider = Tab:CreateDivider() 
+
+local targetShirtId = ""
+
+local InputShirt = Tab:CreateInput({
+	Name = "👕 Введите ID Кофты",
+	CurrentValue = "",
+	PlaceholderText = "ID",
+	RemoveTextAfterFocusLost = false,
+	Flag = "ShirtInput",
+	Callback = function(Text)
+		targetShirtId = string.gsub(Text, "%s", "")
+	end,
+})
+
+local ButtonShirt = Tab:CreateButton({
+	Name = "Одеть кофту",
+	Callback = function()
+		if targetShirtId == "" then return end
+
+		local player = game.Players.LocalPlayer
+		if player and player.Character then
+			local shirt = player.Character:FindFirstChild("Shirt")
+			if shirt then
+				shirt.ShirtTemplate = "rbxassetid://" .. targetShirtId
+			end
+		end
+	end,
+})
+
+local Divider = Tab:CreateDivider()
+
+local targetPantsId = ""
+
+local InputPants = Tab:CreateInput({
+	Name = "👖 Введите ID Штанов",
+	CurrentValue = "",
+	PlaceholderText = "ID",
+	RemoveTextAfterFocusLost = false,
+	Flag = "PantsInput",
+	Callback = function(Text)
+		targetPantsId = string.gsub(Text, "%s", "")
+	end,
+})
+
+local ButtonPants = Tab:CreateButton({
+	Name = "Одеть штаны",
+	Callback = function()
+		if targetPantsId == "" then return end
+
+		local player = game.Players.LocalPlayer
+		if player and player.Character then
+			local pants = player.Character:FindFirstChild("Pants")
+			if pants then
+				pants.PantsTemplate = "rbxassetid://" .. targetPantsId
+			end
+		end
+	end,
+})
+
+local Divider = Tab:CreateDivider() 
+
+local Tab = Window:CreateTab("Misc", 118163937151189)
+
+local Divider = Tab:CreateDivider() 
+
+local Button = Tab:CreateButton({
+	Name = "🌿 Собрать все листочки",
+	Callback = function()
+		if isCollecting then return end
+		isCollecting = true
+		local character = player.Character
+		if character and character:FindFirstChild("HumanoidRootPart") then
+			local humanoidRootPart = character.HumanoidRootPart
+			local originalPosition = humanoidRootPart.Position
+			local listoks = {}
+
+			for _, model in ipairs(workspace:GetChildren()) do
+				if model:IsA("Model") and model.Name == "LISTOK" then
+					local listokPart = model:FindFirstChild("Listok")
+					if listokPart and listokPart:IsA("MeshPart") then
+						table.insert(listoks, listokPart.Position)
+					end
+				end
+			end
+
+			table.sort(listoks, function(a, b)
+				return (a - originalPosition).Magnitude < (b - originalPosition).Magnitude
+			end)
+
+			for _, pos in ipairs(listoks) do
+				humanoidRootPart.CFrame = CFrame.new(pos)
+				task.wait(teleportDelay)
+			end
+
+			humanoidRootPart.CFrame = CFrame.new(originalPosition)
+		end
+
+		isCollecting = false 
+	end
+})
+
+local Divider = Tab:CreateDivider() 
+
+local Toggle = Tab:CreateToggle({
+	Name = "🔓 Убрать коллизию у игроков",
+	CurrentValue = false,
+	Flag = "Toggle1",
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+
+		local function toggleCollision(targetPlayer)
+			local character = targetPlayer.Character
+			if character then
+				for _, part in pairs(character:GetChildren()) do
+					if part:IsA("BasePart") then
+						part.CanCollide = not Value
+					end
+				end
+			end
+		end
+
+		for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+			if otherPlayer ~= player then
+				toggleCollision(otherPlayer)
+			end
+		end
+
+		game.Players.PlayerAdded:Connect(function(newPlayer)
+			toggleCollision(newPlayer)
+		end)
+	end,
+})
+
+
+local Divider = Tab:CreateDivider() 
+
+local Toggle = Tab:CreateToggle({
+	Name = "🔒 Скрыть игроков",
+	CurrentValue = false,
+	Flag = "Toggle1",
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+
+		local function movePlayerToReplicatedStorage(targetPlayer)
+			local character = targetPlayer.Character
+			if character then
+				character.Parent = game.ReplicatedStorage
+				for _, part in pairs(character:GetChildren()) do
+					if part:IsA("BasePart") then
+						part.CanCollide = false
+					end
+				end
+			end
+		end
+
+		for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+			if otherPlayer ~= player then
+				movePlayerToReplicatedStorage(otherPlayer)
+			end
+		end
+
+		game.Players.PlayerAdded:Connect(function(newPlayer)
+			if Value then
+				movePlayerToReplicatedStorage(newPlayer)
+			end
+		end)
+
+		if not Value then
+			for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+				if otherPlayer.Character then
+					otherPlayer.Character.Parent = game.Workspace
+					for _, part in pairs(otherPlayer.Character:GetChildren()) do
+						if part:IsA("BasePart") then
+							part.CanCollide = true
+						end
+					end
+				end
+			end
+		end
+	end,
+})
+
+local Divider = Tab:CreateDivider() 
+
+local Tab = Window:CreateTab("Info", 100767834808806)
+
+local Paragraph = Tab:CreateParagraph({Title = "🔧 Скрипт был создан в одиночку", Content = "by PavelDIPF ✨"})
+local Paragraph = Tab:CreateParagraph({Title = "Скрипт для игры", Content = "🚇 CasualMetro!"})
+local Paragraph = Tab:CreateParagraph({Title = "Знайте и не пропустите что", Content = "Больше скриптов и обновлений в ТГК: CasualScripts 📲"})
+local Paragraph = Tab:CreateParagraph({Title = "🚀 Так же", Content = "📝 Следите за новыми обновлениями и новостями!"})
+local Paragraph = Tab:CreateParagraph({Title = "💬 Идеи и предложения", Content = "📝 Пишите в тг: PavelDIPF 📲"})
