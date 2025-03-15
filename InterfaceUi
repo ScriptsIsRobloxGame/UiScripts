@@ -629,6 +629,73 @@ local Toggle = Tab:CreateToggle({
 
 local Divider = Tab:CreateDivider() 
 
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+
+local function BuyItem()
+    if not localPlayer or not localPlayer.Character then return end
+    local humanoidRootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoidRootPart then return end
+    
+    local originalPosition = humanoidRootPart.CFrame
+    local buy1 = workspace.Terrain:FindFirstChild("Buy1")
+    local buy2 = workspace.Terrain:FindFirstChild("Buy2")
+    
+    if not buy1 or not buy2 then return end
+
+    local tools = {}
+    
+    for _, obj in pairs(localPlayer.Backpack:GetChildren()) do
+        if obj:IsA("Tool") then
+            table.insert(tools, obj)
+        end
+    end
+    
+    if #tools == 0 and not localPlayer.Character:FindFirstChildOfClass("Tool") then
+        return
+    end
+    
+    humanoidRootPart.CFrame = buy1.CFrame * CFrame.new(-5, 0, 0)
+    task.wait(0.1)
+    
+    for _, tool in ipairs(tools) do
+        tool.Parent = localPlayer.Character
+    end
+    
+    task.wait(0.1)
+    
+    local proximity1 = buy1:FindFirstChild("ProximityPrompt")
+    local proximity2 = buy2:FindFirstChild("ProximityPrompt")
+    
+    for _, tool in ipairs(tools) do
+        if proximity1 then
+            fireproximityprompt(proximity1, 1, true)
+        end
+        
+        task.wait(0.1)
+        
+        if proximity2 then
+            fireproximityprompt(proximity2, 1, true)
+        end
+        
+        task.wait(0.1) 
+    end
+    
+    task.wait(0.1)
+    
+    humanoidRootPart.CFrame = originalPosition
+end
+
+local Button = Tab:CreateButton({
+    Name = "🛒 Купить все вещи",
+    Callback = function()
+        BuyItem()
+    end
+})
+
+local Divider = Tab:CreateDivider() 
+
 local Tab = Window:CreateTab("Info", 100767834808806)
 
 local Paragraph = Tab:CreateParagraph({Title = "🔧 Скрипт был создан в одиночку", Content = "by PavelDIPF ✨"})
